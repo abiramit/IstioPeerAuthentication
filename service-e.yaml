@@ -1,0 +1,46 @@
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-e
+  namespace: "istio-serviced"
+  labels:
+    app: service-e
+spec:
+  ports:
+    - port: 8095
+      name: http
+  selector:
+    app: service-e
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-e
+  namespace: "istio-serviced"
+  labels:
+    app: service-e
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-e
+  template:
+    metadata:
+      labels:
+        app: service-e
+        version: v1
+    spec:
+      containers:
+        - name: app
+          image: abisruthi/microservices:seviceE1
+          env:
+             - name: SERVICE_HOST
+               value: welcome-app.istio-servicea.svc.cluster.local
+             - name: SERVICE_PORT
+               value: "9091"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8095
